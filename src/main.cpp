@@ -32,7 +32,6 @@ ADXL345 accel(ADXL345_STD);
   float impactTh = 2;
   float angleTh = 65;
   float timeTh = 2;
-  float maximum = 0;
 
 void ICACHE_RAM_ATTR handleButton()
 { // przerwanie wywolane przez nacisniecie przycisku pomiaru
@@ -128,18 +127,13 @@ void loop(){
       attachInterrupt(digitalPinToInterrupt(0), handleButton, FALLING);
     }
 
-    if (accel.update()){
+    if (accel.update())
       actual.setValues(accel.getX(), accel.getY(), accel.getZ());
-      if(actual.module > maximum){ 
-      maximum = actual.module;
-      Serial.println(maximum);
-      }
-  }else{
+    else
     Serial.println("dead");
-  }
     
     if(actual.module > impactTh){ // algorytm
-        Serial.println("Gleba?");
+        Serial.println("Uderzenie");
         delay(timeTh*1000);
         if(actual.calculateAngle(refrence) > angleTh){
           Serial.println("Upadek");
